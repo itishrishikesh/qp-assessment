@@ -1,32 +1,34 @@
+version: '3'
 services:
-  postgresdb:
-    image: postgres
-    restart: unless-stopped
+  postgres:
+    image: postgres:15.4
+    restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=grocery
+      - POSTGRES_PASSWORD=grocery
       - POSTGRES_DB=grocery
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
-      - db:/var/lib/postgres
+      - /resources
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d grocery -U grocery" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   app:
+    build:
+      context: .
+      dockerfile: Dockerfile
     depends_on:
-      - postgresdb
-    build: ./groceries
-    restart: on-failure
-    env_file: ./.env
+      postgres:
+        condition: service_healthy
     ports:
-      - 8080:8080
+      - "8080:8080"
     environment:
-      SPRING_APPLICATION_JSON: '{
-        "spring.datasource.url"  : "jdbc:postgresql://postgresdb:5432/grocery",
-        "spring.datasource.username" : "postgres",
-        "spring.datasource.password" : "postgres",
-        "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.PostgreSQLDialect",
-        "spring.jpa.hibernate.ddl-auto" : "update"
-      }'
+      - spring.datasource.url=jdbc:postgresql://postgres:5432/grocery
+      - spring.datasource.username=grocery
+      - spring.datasource.password=grocery
+      - spring.jpa.hibernate.ddl-auto=update
     volumes:
       - .m2:/root/.m2
-    stdin_open: true
-    tty: true
