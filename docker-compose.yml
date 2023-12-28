@@ -9,8 +9,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - type: volume
-      - db: var/lib/postgres
+      - ~/app/data:/var/lib/postgresql/data
   app:
     depends_on:
       - postgresdb
@@ -30,5 +29,3 @@ services:
       - .m2:/root/.m2
     stdin_open: true
     tty: true
-volumes:
-  db:
