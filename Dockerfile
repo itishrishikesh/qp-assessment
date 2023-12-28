@@ -8,4 +8,4 @@ COPY pom.xml /app
 RUN chmod +x mvnw
 RUN ./mvnw clean package
 
-ENTRYPOINT ["java", "-jar", "target/your-application.jar"]
+ENTRYPOINT ["java", "-jar", "target/groceries-0.0.1-SNAPSHOT.jar"]
