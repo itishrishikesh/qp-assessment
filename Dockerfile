@@ -1,7 +1,11 @@
-FROM maven:3.8.5-openjdk-17
+FROM eclipse-temurin:17-jdk-focal
 
-WORKDIR /groceries
-COPY . .
-RUN mvn clean install
+WORKDIR /app
 
-CMD mvn spring-boot:run
+COPY .mvn/ .mvn
+COPY mvnw pom.xml ./
+RUN ./mvnw dependency:go-offline
+
+COPY src ./src
+
+CMD ["./mvnw", "spring-boot:run"]
