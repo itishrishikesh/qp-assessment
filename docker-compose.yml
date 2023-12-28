@@ -7,9 +7,10 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=grocery
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
-      - db: /var/lib/postgres
+      - type: volume
+      - db: var/lib/postgres
   app:
     depends_on:
       - postgresdb
@@ -29,6 +30,5 @@ services:
       - .m2:/root/.m2
     stdin_open: true
     tty: true
-
 volumes:
   db:
